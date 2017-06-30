@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "scanner.h"
+
 int tt[7][4] = {{2 ,1 ,0 ,5 },
                 {5 ,1 ,3 ,5 },
                 {2 ,2 ,4 ,5 },
@@ -16,7 +17,8 @@ int tt[7][4] = {{2 ,1 ,0 ,5 },
 */
 char caracter; /* caracter que esta siendo escaneado*/
 enum tipo {LETRA, NUMERO, ESPACIOS, ERROR }; /*columnas*/
-extern int esFinal = 0; /* variable que chequea cuando debe parar*/
+enum estado{ACEPTOR_LETRA = 3, ACEPTOR_NUMERO = 4,ESTADO_ERROR = 6, CENTINELA = 99};
+int esFinal = 0; /* variable que chequea cuando debe parar*/
 
 char scanner(FILE *automata)
 {
@@ -67,9 +69,9 @@ int obtener_columna (char caracter)
 /*aceptor / centinela*/
 int debo_parar(int estado, FILE *automata)
 {
-    if (estado == 3 || estado == 4)
+    if (estado == ACEPTOR_LETRA || estado == ACEPTOR_NUMERO)
     {
-        if (estado == 99)
+        if (estado == CENTINELA)
         {
             ungetc(caracter, automata);
         }
@@ -77,7 +79,7 @@ int debo_parar(int estado, FILE *automata)
     }
     else
     {
-        if (estado == 6)
+        if (estado == ESTADO_ERROR)
             return 1;
         return 0;
     }
